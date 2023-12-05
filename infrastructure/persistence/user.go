@@ -13,7 +13,7 @@ func NewUserPersistence() repository.UserRepository {
 }
 
 func (up userPersistence) InsertUser(DB *sql.DB, name, password string) error {
-	stmt, err := DB.Prepare("INSERT INTO user(user_name, password) VALUES(?, ?)")
+	stmt, err := DB.Prepare("INSERT INTO users(user_name, password) VALUES(?, ?)")
 	if err != nil {
 		return err
 	}
@@ -22,7 +22,7 @@ func (up userPersistence) InsertUser(DB *sql.DB, name, password string) error {
 }
 
 func (up userPersistence) GetByUserName(DB *sql.DB, name string) (*domain.User, error) {
-	row := DB.QueryRow("SELECT id, user_name, password, created_at FROM user WHERE user_name = ?", name)
+	row := DB.QueryRow("SELECT id, user_name, password, created_at FROM users WHERE user_name = ?", name)
 	//row型をgolangで利用できる形にキャストする。
 	return convertToUser(row)
 }

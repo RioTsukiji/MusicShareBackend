@@ -7,5 +7,5 @@ import (
 
 type MusicRepository interface {
 	InsertMusic(DB *sql.DB, title string, artist string, link string, userID int) error
-	GetAllMusic(DB *sql.DB) (*domain.Music, error)
+	GetAllMusic(DB *sql.DB) ([]domain.Music, error)
 }

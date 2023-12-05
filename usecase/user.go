@@ -23,14 +23,17 @@ func NewUserUseCase(ur repository.UserRepository) UserUseCase {
 
 func (uu userUseCase) InsertUser(DB *sql.DB, name string, password string) error {
 	//一意でランダムな文字列を生成する
-	hashedPassword, err := uuid.NewRandom() //返り値はuuid型
-	if err != nil {
-		return err
-	}
+	/*
+		hashedPassword, err := uuid.NewRandom() //返り値はuuid型
+		if err != nil {
+			return err
+		}
+
+	*/
 
 	//domainを介してinfrastructureで実装した関数を呼び出す。
 	// Persistence（Repository）を呼出
-	err = uu.userRepository.InsertUser(DB, name, password)
+	err := uu.userRepository.InsertUser(DB, name, password)
 	if err != nil {
 		return err
 	}

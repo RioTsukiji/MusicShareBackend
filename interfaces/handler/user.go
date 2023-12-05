@@ -29,7 +29,7 @@ func NewUserHandler(uu usecase.UserUseCase) UserHandler {
 }
 
 func (uh userHandler) HandleUserGet(c *gin.Context) {
-	username := c.Param("username")
+	username := c.Query("username")
 	user, err := uh.userUseCase.GetByUserName(config.Db, username)
 	if err != nil {
 		fmt.Println(fmt.Sprintf("error: %v", err))

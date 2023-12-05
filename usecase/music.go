@@ -8,7 +8,7 @@ import (
 
 type MusicUseCase interface {
 	InsertMusic(DB *sql.DB, title string, artist string, link string, userID int) error
-	GetAllMusic(DB *sql.DB) (*domain.Music, error)
+	GetAllMusic(DB *sql.DB) ([]domain.Music, error)
 }
 
 type musicUseCase struct {
@@ -33,7 +33,7 @@ func (mu musicUseCase) InsertMusic(DB *sql.DB, title string, artist string, link
 	return nil
 }
 
-func (mu musicUseCase) GetAllMusic(DB *sql.DB) (*domain.Music, error) {
+func (mu musicUseCase) GetAllMusic(DB *sql.DB) ([]domain.Music, error) {
 	music, err := mu.musicRepository.GetAllMusic(DB)
 	if err != nil {
 		return nil, err
