@@ -5,6 +5,7 @@ import (
 	"github.com/RioTsukiji/MusicShareBackend/interfaces/handler"
 	"github.com/RioTsukiji/MusicShareBackend/usecase"
 	"github.com/gin-gonic/gin"
+	"os"
 )
 
 func main() {
@@ -24,5 +25,10 @@ func main() {
 	engine.GET("/", musicHandler.HandleMusicGet)
 	engine.POST("/share", musicHandler.HandleMusicRecord)
 
-	engine.Run(":3000")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000" // デフォルトポート
+	}
+
+	engine.Run(":" + port)
 }
