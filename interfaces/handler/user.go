@@ -12,10 +12,15 @@ type userSignupRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
+type userLoginRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
 
 type UserHandler interface {
 	HandleUserGet(c *gin.Context)
 	HandleUserSignup(c *gin.Context)
+	HandleUserLogin(c *gin.Context)
 }
 
 type userHandler struct {
@@ -48,4 +53,17 @@ func (uh userHandler) HandleUserSignup(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, "OK")
+}
+
+func (uh userHandler) HandleUserLogin(c *gin.Context) {
+	var requestBody userLoginRequest
+	if err := c.BindJSON(&requestBody); err != nil {
+		return
+	}
+	result, err := uh.userUseCase.VerifyPassword(config.Db, requestBody.Username, requestBody.Password)
+	if err != nil {
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
 }

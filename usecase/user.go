@@ -4,11 +4,13 @@ import (
 	"database/sql"
 	"github.com/RioTsukiji/MusicShareBackend/domain"
 	"github.com/RioTsukiji/MusicShareBackend/domain/repository"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserUseCase interface {
 	InsertUser(DB *sql.DB, name string, password string) error
 	GetByUserName(DB *sql.DB, name string) (*domain.User, error)
+	VerifyPassword(DB *sql.DB, name string, password string) (bool, error)
 }
 
 type userUseCase struct {
@@ -22,18 +24,13 @@ func NewUserUseCase(ur repository.UserRepository) UserUseCase {
 }
 
 func (uu userUseCase) InsertUser(DB *sql.DB, name string, password string) error {
-	//一意でランダムな文字列を生成する
-	/*
-		hashedPassword, err := uuid.NewRandom() //返り値はuuid型
-		if err != nil {
-			return err
-		}
 
-	*/
+	hashedPassword, hashedErr := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if hashedErr != nil {
+		return hashedErr
+	}
 
-	//domainを介してinfrastructureで実装した関数を呼び出す。
-	// Persistence（Repository）を呼出
-	err := uu.userRepository.InsertUser(DB, name, password)
+	err := uu.userRepository.InsertUser(DB, name, string(hashedPassword))
 	if err != nil {
 		return err
 	}
@@ -46,4 +43,17 @@ func (uu userUseCase) GetByUserName(DB *sql.DB, name string) (*domain.User, erro
 		return nil, err
 	}
 	return user, nil
+}
+
+func (uu userUseCase) VerifyPassword(DB *sql.DB, name string, password string) (bool, error) {
+	user, err := uu.userRepository.GetByUserName(DB, name)
+	if err != nil {
+		return false, err
+	}
+	hashedPassword := user.Password
+	compareErr := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+	if compareErr != nil {
+		return false, compareErr
+	}
+	return true, nil
 }

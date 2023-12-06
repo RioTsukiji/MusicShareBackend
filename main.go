@@ -17,7 +17,8 @@ func main() {
 	musicHandler := handler.NewMusicHandler(musicUseCase)
 
 	engine := gin.Default()
-	engine.GET("/login", userHandler.HandleUserGet)
+	// Todo: ログイン機能を実装する
+	engine.POST("/login", userHandler.HandleUserLogin)
 	engine.POST("/signup", userHandler.HandleUserSignup)
 
 	engine.GET("/", musicHandler.HandleMusicGet)
